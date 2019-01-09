@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  finalizers:
+  - kubernetes.io/pv-protection
+  name: pv-80g-3
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 80Gi
+  hostPath:
+    path: /mnt/local-storage/storage/pv-80g-3
+    type: ''
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: local-storage
