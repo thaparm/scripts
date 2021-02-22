@@ -20,8 +20,7 @@ cpd-cli install  --repo repo.yaml --assembly lite --namespace $NAMESPACE --stora
 
 cpd-cli adm --repo ./repo.yaml --assembly watson-assistant --arch x86_64 --namespace $NAMESPACE --accept-all-licenses --apply
 
-# shellcheck disable=SC2046
-cpd-cli install  --repo repo.yaml --assembly edb-operator --optional-modules edb-pg-base:x86_64 --namespace $NAMESPACE  --accept-all-licenses  --transfer-image-to "$(oc registry info)"/$NAMESPACE --cluster-pull-prefix $OPENSHIFT_REGISTRY_PULL/$NAMESPACE --target-registry-username $OPENSHIFT_USERNAME --target-registry-password=$(oc whoami -t)  --insecure-skip-tls-verify
+cpd-cli install  --repo repo.yaml --assembly edb-operator --optional-modules edb-pg-base:x86_64 --namespace $NAMESPACE  --accept-all-licenses  --transfer-image-to "$(oc registry info)"/$NAMESPACE --cluster-pull-prefix $OPENSHIFT_REGISTRY_PULL/$NAMESPACE --target-registry-username $OPENSHIFT_USERNAME --target-registry-password="$(oc whoami -t)" --insecure-skip-tls-verify
 
 cpd-cli install  --repo repo.yaml --assembly watson-assistant-operator --optional-modules watson-assistant-operand-ibm-events-operator:x86_64 --namespace $NAMESPACE --storageclass ocs-storagecluster-ceph-rbd  --latest-dependency  --insecure-skip-tls-verify  --accept-all-licenses --override wa-install-override.yaml  --transfer-image-to "$(oc registry info)"/$NAMESPACE --cluster-pull-prefix $OPENSHIFT_REGISTRY_PULL/$NAMESPACE --target-registry-username $OPENSHIFT_USERNAME --target-registry-password="$(oc whoami -t)"
 
