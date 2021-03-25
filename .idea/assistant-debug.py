@@ -20,16 +20,12 @@ def list_ns_pods(ns, label = None):
     v1 = client.CoreV1Api()
 #    print("Listing pods with their IPs in namespace {}".format(ns))
     ret = v1.list_namespaced_pod(namespace = ns,watch=False)
+
     if label:
         retlist = []
-        print(label)
         for i in ret.items:
-            print(str(label.keys()))
-            print(str(label.values()))
             for keys in label:
-                print(label(keys))
-                print(str(label.values()))
-                if (keys in i.metadata.labels  and i.metadata.labels[label(keys)] == label(keys)):
+                if (keys in i.metadata.labels  and i.metadata.labels.items() >= label.items()):
                     retlist.append(i.metadata.name)
         return retlist
     return ret
@@ -48,19 +44,21 @@ def watch10():
        if not count:
            w.stop()
 
-def check_logs(ns,pod,cont = None, filter = None, since_seconds = 7000000, timestamps = True, tail_lines = 5000):
+def check_logs(ns,pod,cont = None, filter = None, since_seconds = 7000000, timestamps = True, taillines = 5):
     v1 = client.CoreV1Api()
     try:
-        logs = v1.read_namespaced_pod_log(namespace = ns,name = pod, container = cont, pretty = True )
+        logs = v1.read_namespaced_pod_log(namespace = ns, name = pod, container = cont, pretty = True , tail_lines = taillines )
         ret = ""
         if filter:
             errors = [line for line in logs.split('\n') if filter.casefold() in line.casefold()]
             ret = ""
             for line in errors:
-                ret +=  pod + " : " + line + "\n"
+                ret +=  pod + " : " + cont + " : " + line + "\n"
+            ret +=  80*"*"
             return ret
         for line in logs.split('\n'):
-            ret +=  pod + " : " + line + "\n"
+            ret +=  pod + " : "  + cont + " : " + line + "\n"
+        ret +=  80*"*"
         return ret
     except ApiException as e:
         return ("Exception when calling CoreV1Api->read_namespaced_pod_log: %s\n" % e)
@@ -88,13 +86,12 @@ def main():
 #   list_pods()
 
 #    listpods = list_ns_pods(ns = "zen", label = {'component': 'store'})
-    listpods = list_ns_pods(ns = "zen", label = {'icpdsupport/app': 'assistant'})
+    listpods = list_ns_pods(ns = "zen", label = {'icpdsupport/addOnId': 'assistant'})
     for i in listpods:
         for j in containers_in_pod(i, "zen"):
-            print(j)
+#            print(j)
             logs = check_logs("zen",i ,cont = j, filter = "Error")
             print(logs)
-            print ( "*"*80)
    #         print( *errors, sep = "\n")
 
 
