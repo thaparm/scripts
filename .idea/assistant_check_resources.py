@@ -1,18 +1,29 @@
 import warnings
 from kubernetes import client, config, watch
 warnings.filterwarnings("ignore")
-# for i in $(oc get pods --no-headers | grep -i running | cut -f1 -d\ );
-# do echo $i;
-# oc get pods -o jsonpath="{.metadata.name},
-# {.metadata.annotations.productName},
-# {.metadata.labels.icpdsupport/addOnId},
-# {.spec.containers[*].resources.requests.cpu},
-# {.spec.containers[*].resources.limits.cpu},
-# {.spec.containers[*].resources.requests.memory},
-# {.spec.containers[*].resources.limits.memory},
-# {.metadata.labels.slot} {'\n'}" ${i} >> ./running-pods.resources-cpu-ram-v2.csv; done
 
-# Configs can be set in Configuration class directly or using helper utility
+_prefix = {'y': 1e-24,  # yocto
+           'z': 1e-21,  # zepto
+           'a': 1e-18,  # atto
+           'f': 1e-15,  # femto
+           'p': 1e-12,  # pico
+           'n': 1e-9,   # nano
+           'u': 1e-6,   # micro
+           'm': 1e-3,   # mili
+           'c': 1e-2,   # centi
+           'd': 1e-1,   # deci
+           'k': 1e3,    # kilo
+           'M': 1e6,    # mega
+           'Mi': 1e6,    # mega
+           'G': 1e9,    # giga
+           'Mi': 1e9,    # giga
+           'T': 1e12,   # tera
+           'P': 1e15,   # peta
+           'E': 1e18,   # exa
+           'Z': 1e21,   # zetta
+           'Y': 1e24,   # yotta
+           }
+
 def load_config():
     config.load_kube_config()
     return
@@ -80,14 +91,7 @@ def resources(ns, label = None):
                                         ])
         return retlist
     return ret
-# oc get pods -o jsonpath="{.metadata.name},
-# {.metadata.annotations.productName},
-# {.metadata.labels.icpdsupport/addOnId},
-# {.spec.containers[*].resources.requests.cpu},
-# {.spec.containers[*].resources.limits.cpu},
-# {.spec.containers[*].resources.requests.memory},
-# {.spec.containers[*].resources.limits.memory},
-# {.metadata.labels.slot}
+
 
 def main():
     load_config()
@@ -97,4 +101,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
