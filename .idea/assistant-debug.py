@@ -1,5 +1,5 @@
-from kubernetes import client, config, watch
 import warnings
+from kubernetes import client, config, watch
 warnings.filterwarnings("ignore")
 
 
@@ -13,7 +13,7 @@ def list_pods():
     print("Listing pods with their IPs:")
     ret = v1.list_pod_for_all_namespaces(watch=False)
     for i in ret.items:
-         print("%s\t%s\t%s" % (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
+        print("%s\t%s\t%s" % (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
     return
 
 def list_ns_pods(ns, label = None):
@@ -39,15 +39,17 @@ def watch10():
     count = 10
     w = watch.Watch()
     for event in w.stream(v1.list_namespace, _request_timeout=60):
-       print("Event: %s %s" % (event['type'], event['object'].metadata.name))
-       count -= 1
-       if not count:
-           w.stop()
+        print("Event: %s %s" % (event['type'], event['object'].metadata.name))
+        count -= 1
+        if not count:
+            w.stop()
 
-def check_logs(ns,pod,cont = None, filter = None, since_seconds = 7000000, timestamps = True, taillines = 5):
+def check_logs(ns,pod,cont = None, filter = None, since_seconds = 7000000, \
+               timestamps = True, taillines = 500):
     v1 = client.CoreV1Api()
     try:
-        logs = v1.read_namespaced_pod_log(namespace = ns, name = pod, container = cont, pretty = True , tail_lines = taillines )
+        logs = v1.read_namespaced_pod_log(namespace = ns, name = pod,\
+                                          container = cont, pretty = True , tail_lines = taillines )
         ret = ""
         if filter:
             errors = [line for line in logs.split('\n') if filter.casefold() in line.casefold()]
@@ -61,7 +63,7 @@ def check_logs(ns,pod,cont = None, filter = None, since_seconds = 7000000, times
         ret +=  80*"*"
         return ret
     except ApiException as e:
-        return ("Exception when calling CoreV1Api->read_namespaced_pod_log: %s\n" % e)
+        return f'Exception when calling CoreV1Api->read_namespaced_pod_log: {e}\n'
 
 
 def containers_in_pod(podname, ns):
@@ -90,7 +92,7 @@ def main():
     for i in listpods:
         for j in containers_in_pod(i, "zen"):
 #            print(j)
-            logs = check_logs("zen",i ,cont = j, filter = "Error")
+            logs = check_logs("zen",i ,cont = j, filter = "Error", taillines = 50)
             print(logs)
    #         print( *errors, sep = "\n")
 
