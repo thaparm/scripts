@@ -19,9 +19,9 @@ def list_pods():
     return
 
 def list_ns_pods(namespace, label = None):
-    v1 = client.CoreV1Api()
+    v1_api = client.CoreV1Api()
     #    print("Listing pods with their IPs in namespace {}".format(ns))
-    ret = v1.list_namespaced_pod(namespace = namespace,watch=False)
+    ret = v1_api.list_namespaced_pod(namespace = namespace,watch=False)
 
     if label:
         retlist = []
@@ -33,10 +33,10 @@ def list_ns_pods(namespace, label = None):
         return retlist
     return ret
 
-def containers_in_pod(podname, ns):
+def containers_in_pod(podname, namespace):
     v1_api = client.CoreV1Api()
-    if ns:
-        listpods = v1_api.list_namespaced_pod(namespace = ns,watch=False)
+    if namespace:
+        listpods = v1_api.list_namespaced_pod(namespace = namespace,watch=False)
     else:
         listpods = v1_api.list_pod_for_all_namespaces(watch=False)
     list_of_containers = []
@@ -50,10 +50,10 @@ def containers_in_pod(podname, ns):
     return list_of_containers
 
 
-def resources(ns, label = None):
-    v1 = client.CoreV1Api()
+def resources(namespace, label = None):
+    v1_api = client.CoreV1Api()
     #    print("Listing pods with their IPs in namespace {}".format(ns))
-    ret = v1.list_namespaced_pod(namespace = ns,watch=False)
+    ret = v1_api.list_namespaced_pod(namespace = namespace,watch=False)
 
     if label:
         retlist = []
@@ -88,24 +88,25 @@ def convert(number = None):
                'Gi': "(1024**3)",           # giga
                'Ti': "(1024**4)",           # tera
                }
-    if number == None or type(number) == int or number.isnumeric():
+    if number is None or isinstance(number, int) or number.isnumeric():
         return number
     else:
         number = ([number.replace(key,"*" + val) for key,val in unit.items() if number.endswith(key)])
-        return eval(number[0])
+        number = eval(number[0])
+        return number
 
 
 def main():
     load_config()
-    resList = resources("zen", label = {"icpdsupport/addOnId" : "assistant"})
+    res_list = resources("zen", label = {"icpdsupport/addOnId" : "assistant"})
 #    print(p)
-    for name in resList:
+    for name in res_list:
         print(name)
     cpu_req = 0
     cpu_limit = 0
     mem_req = 0
     mem_limit = 0
-    for name in resList:
+    for name in res_list:
         cpu_req += float(name[4])
         cpu_limit += float(name[5])
         mem_req += float(name[6])
