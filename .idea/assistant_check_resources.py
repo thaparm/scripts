@@ -2,15 +2,6 @@ import warnings
 from kubernetes import client, config
 warnings.filterwarnings("ignore")
 
-_prefix = {'m': 1/1024,             # mili
-           'M': 1024,               # mega
-           'G': 1024**2,             # giga
-           'T': 1024*1024*1024,     # tera
-           'Mi': 1024,              # mega
-           'Gi': 1024**2,            # giga
-           'Ti': 1024*1024*1024,    # tera
-           }
-
 def load_config():
     '''
     load kubernetes config
