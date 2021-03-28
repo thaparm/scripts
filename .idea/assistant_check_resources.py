@@ -79,7 +79,7 @@ def resources(namespace, label = None):
     return ret
 
 def convert(number = None):
-    unit = {'m': "1/1024",                  # mili
+    unit = {'m': "1/1000",                  # mili
                'M': "1024",                 # mega
                'G': "(1024**2)",            # giga
                'T': "(1024**3)",            # tera
